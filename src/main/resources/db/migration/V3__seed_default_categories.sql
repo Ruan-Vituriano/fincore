@@ -1,0 +1,15 @@
+INSERT INTO categories (id, name, type, icon, color, user_id, created_at, updated_at) VALUES
+    ('10000000-0000-0000-0000-000000000001', 'Salário', 'INCOME', 'salary', '#4CAF50', NULL, NOW(), NOW()),
+    ('10000000-0000-0000-0000-000000000002', 'Freelance', 'INCOME', 'work', '#8BC34A', NULL, NOW(), NOW()),
+    ('10000000-0000-0000-0000-000000000003', 'Investimentos', 'INCOME', 'trending_up', '#009688', NULL, NOW(), NOW()),
+    ('10000000-0000-0000-0000-000000000004', 'Outros', 'INCOME', 'more_horiz', '#9E9E9E', NULL, NOW(), NOW()),
+    ('10000000-0000-0000-0000-000000000005', 'Moradia', 'EXPENSE', 'home', '#F44336', NULL, NOW(), NOW()),
+    ('10000000-0000-0000-0000-000000000006', 'Alimentação', 'EXPENSE', 'restaurant', '#FF9800', NULL, NOW(), NOW()),
+    ('10000000-0000-0000-0000-000000000007', 'Transporte', 'EXPENSE', 'directions_car', '#2196F3', NULL, NOW(), NOW()),
+    ('10000000-0000-0000-0000-000000000008', 'Saúde', 'EXPENSE', 'favorite', '#E91E63', NULL, NOW(), NOW()),
+    ('10000000-0000-0000-0000-000000000009', 'Lazer', 'EXPENSE', 'sports_esports', '#9C27B0', NULL, NOW(), NOW()),
+    ('10000000-0000-0000-0000-00000000000A', 'Educação', 'EXPENSE', 'school', '#3F51B5', NULL, NOW(), NOW()),
+    ('10000000-0000-0000-0000-00000000000B', 'Assinaturas', 'EXPENSE', 'subscriptions', '#795548', NULL, NOW(), NOW()),
+    ('10000000-0000-0000-0000-00000000000C', 'Mercado', 'EXPENSE', 'shopping_cart', '#FFC107', NULL, NOW(), NOW()),
+    ('10000000-0000-0000-0000-00000000000D', 'Contas', 'EXPENSE', 'receipt', '#607D8B', NULL, NOW(), NOW()),
+    ('10000000-0000-0000-0000-00000000000E', 'Outros', 'EXPENSE', 'more_horiz', '#9E9E9E', NULL, NOW(), NOW());
