@@ -21,11 +21,11 @@ API REST para gestão de finanças pessoais com sugestões via IA (Gemini + Lang
 
 ## Fase 0 — Infraestrutura
 
-- [ ] **Supabase** — Criar projeto no Supabase Cloud (PostgreSQL 15+)
-- [ ] **`application.yaml`** — Configurar datasource, JPA (`validate`), Flyway, JWT, server, LangChain4J
-- [ ] **`.env`** — Secrets: `SUPABASE_DB_URL`, `SUPABASE_DB_USER`, `SUPABASE_DB_PASSWORD`, `JWT_SECRET`, `GEMINI_API_KEY`
-- [ ] **`.gitignore`** — Adicionar `.env`
-- [ ] **`Dockerfile`** — Dockerfile multi-stage apenas para a aplicação
+- [X] **Supabase** — Criar projeto no Supabase Cloud (PostgreSQL 15+)
+- [X] **`application.yaml`** — Configurar datasource, JPA (`validate`), Flyway, JWT, server, LangChain4J
+- [X] **`.env`** — Secrets: `SUPABASE_DB_URL`, `SUPABASE_DB_USER`, `SUPABASE_DB_PASSWORD`, `JWT_SECRET`, `GEMINI_API_KEY`
+- [X] **`.gitignore`** — Adicionar `.env`
+- [X] **`Dockerfile`** — Dockerfile multi-stage apenas para a aplicação
 - [ ] **`docker-compose.yml`** — Opcional, apenas para dev local com Testcontainers
 
 ---
@@ -46,18 +46,18 @@ API REST para gestão de finanças pessoais com sugestões via IA (Gemini + Lang
 
 ### Endpoints
 
-- [ ] `POST   /api/v1/auth/register` — Cadastro
-- [ ] `POST   /api/v1/auth/login` — Login → JWT
-- [ ] `GET    /api/v1/users/me` — Perfil do logado
-- [ ] `PUT    /api/v1/users/me` — Atualizar perfil
+- [X] `POST   /api/v1/auth/register` — Cadastro
+- [X] `POST   /api/v1/auth/login` — Login → JWT
+- [X] `GET    /api/v1/users/me` — Perfil do logado
+- [X] `PUT    /api/v1/users/me` — Atualizar perfil
 
 ### Camadas
 
-- [ ] `AuthController`, `AuthService`, `UserRepository`, `SecurityConfig`
+- [X] `AuthController`, `AuthService`, `UserRepository`, `SecurityConfig`
 
 ### Flyway
 
-- [ ] `V1__create_users_table.sql`
+- [X] `V1__create_users_table.sql`
 
 ---
 
@@ -78,15 +78,15 @@ API REST para gestão de finanças pessoais com sugestões via IA (Gemini + Lang
 
 ### Endpoints
 
-- [ ] `GET    /api/v1/categories` — Listar (globais + do usuário)
-- [ ] `POST   /api/v1/categories` — Criar
-- [ ] `PUT    /api/v1/categories/{id}` — Atualizar
-- [ ] `DELETE /api/v1/categories/{id}` — Remover
+- [X] `GET    /api/v1/categories` — Listar (globais + do usuário)
+- [X] `POST   /api/v1/categories` — Criar
+- [X] `PUT    /api/v1/categories/{id}` — Atualizar
+- [X] `DELETE /api/v1/categories/{id}` — Remover
 
 ### Flyway
 
-- [ ] `V2__create_categories_table.sql`
-- [ ] `V3__seed_default_categories.sql`
+- [X] `V2__create_categories_table.sql`
+- [X] `V3__seed_default_categories.sql`
 
 ---
 
@@ -404,9 +404,9 @@ com.ruan.fincore
 
 ## Migrations Flyway
 
-- [ ] `V1__create_users_table.sql`
-- [ ] `V2__create_categories_table.sql`
-- [ ] `V3__seed_default_categories.sql`
+- [X] `V1__create_users_table.sql`
+- [X] `V2__create_categories_table.sql`
+- [X] `V3__seed_default_categories.sql`
 - [ ] `V4__create_accounts_table.sql`
 - [ ] `V5__create_transactions_table.sql`
 - [ ] `V6__create_budgets_table.sql`
@@ -418,8 +418,9 @@ com.ruan.fincore
 
 |  | Fase | Depende de | Previsão |
 |---|---|---|---|
-| [ ] | 0 — Infraestrutura | — | — |
-| [ ] | 1 — Segurança + Usuário | Fase 0 | — |
+| [X] | 0 — Infraestrutura | — | — |
+| [X] | 1 — Segurança + Usuário | Fase 0 | — |
+| [X] | 2 — Categorias | Fase 1 | — |
 | [ ] | 2 — Categorias | Fase 1 | — |
 | [ ] | 3 — Contas | Fase 1 | — |
 | [ ] | 4 — Transações | Fases 2, 3 | — |
