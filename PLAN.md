@@ -106,14 +106,14 @@ API REST para gestão de finanças pessoais com sugestões via IA (Gemini + Lang
 
 ### Endpoints
 
-- [ ] `GET    /api/v1/accounts` — Listar
-- [ ] `POST   /api/v1/accounts` — Criar
-- [ ] `PUT    /api/v1/accounts/{id}` — Atualizar
-- [ ] `DELETE /api/v1/accounts/{id}` — Remover
+- [X] `GET    /api/v1/accounts` — Listar
+- [X] `POST   /api/v1/accounts` — Criar
+- [X] `PUT    /api/v1/accounts/{id}` — Atualizar
+- [X] `DELETE /api/v1/accounts/{id}` — Remover
 
 ### Flyway
 
-- [ ] `V4__create_accounts_table.sql`
+- [X] `V4__create_accounts_table.sql`
 
 ---
 
@@ -147,15 +147,15 @@ API REST para gestão de finanças pessoais com sugestões via IA (Gemini + Lang
 
 ### Endpoints
 
-- [ ] `GET    /api/v1/transactions` — Listar (filtros: data, categoria, conta, tipo)
-- [ ] `POST   /api/v1/transactions` — Criar (suporta parcelamento)
-- [ ] `PUT    /api/v1/transactions/{id}` — Atualizar
-- [ ] `DELETE /api/v1/transactions/{id}` — Remover
-- [ ] `GET    /api/v1/transactions/installments/{parentId}` — Listar parcelas
+- [X] `GET    /api/v1/transactions` — Listar (filtros: data, categoria, conta, tipo)
+- [X] `POST   /api/v1/transactions` — Criar (suporta parcelamento)
+- [X] `PUT    /api/v1/transactions/{id}` — Atualizar
+- [X] `DELETE /api/v1/transactions/{id}` — Remover
+- [X] `GET    /api/v1/transactions/installments/{parentId}` — Listar parcelas
 
 ### Flyway
 
-- [ ] `V5__create_transactions_table.sql`
+- [X] `V5__create_transactions_table.sql`
 
 ---
 
@@ -407,8 +407,8 @@ com.ruan.fincore
 - [X] `V1__create_users_table.sql`
 - [X] `V2__create_categories_table.sql`
 - [X] `V3__seed_default_categories.sql`
-- [ ] `V4__create_accounts_table.sql`
-- [ ] `V5__create_transactions_table.sql`
+- [X] `V4__create_accounts_table.sql`
+- [X] `V5__create_transactions_table.sql`
 - [ ] `V6__create_budgets_table.sql`
 - [ ] `V7__create_financial_goals_table.sql`
 
@@ -421,9 +421,8 @@ com.ruan.fincore
 | [X] | 0 — Infraestrutura | — | — |
 | [X] | 1 — Segurança + Usuário | Fase 0 | — |
 | [X] | 2 — Categorias | Fase 1 | — |
-| [ ] | 2 — Categorias | Fase 1 | — |
-| [ ] | 3 — Contas | Fase 1 | — |
-| [ ] | 4 — Transações | Fases 2, 3 | — |
+| [X] | 3 — Contas | Fase 1 | — |
+| [X] | 4 — Transações | Fases 2, 3 | — |
 | [ ] | 5 — Orçamentos | Fases 2, 4 | — |
 | [ ] | 6 — Metas | Fase 1 | — |
 | [ ] | 7 — Dashboard | Fase 4 | — |
