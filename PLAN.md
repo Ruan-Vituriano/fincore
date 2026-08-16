@@ -182,15 +182,15 @@ API REST para gestão de finanças pessoais com sugestões via IA (Gemini + Lang
 
 ### Endpoints
 
-- [ ] `GET    /api/v1/budgets` — Listar
-- [ ] `POST   /api/v1/budgets` — Criar
-- [ ] `PUT    /api/v1/budgets/{id}` — Atualizar
-- [ ] `DELETE /api/v1/budgets/{id}` — Remover
-- [ ] `GET    /api/v1/budgets/summary?month=&year=` — Gasto vs orçado
+- [X] `GET    /api/v1/budgets` — Listar
+- [X] `POST   /api/v1/budgets` — Criar
+- [X] `PUT    /api/v1/budgets/{id}` — Atualizar
+- [X] `DELETE /api/v1/budgets/{id}` — Remover
+- [X] `GET    /api/v1/budgets/summary?month=&year=` — Gasto vs orçado
 
 ### Flyway
 
-- [ ] `V6__create_budgets_table.sql`
+- [X] `V6__create_budgets_table.sql`
 
 ---
 
@@ -211,15 +211,15 @@ API REST para gestão de finanças pessoais com sugestões via IA (Gemini + Lang
 
 ### Endpoints
 
-- [ ] `GET    /api/v1/goals` — Listar
-- [ ] `POST   /api/v1/goals` — Criar
-- [ ] `PUT    /api/v1/goals/{id}` — Atualizar
-- [ ] `DELETE /api/v1/goals/{id}` — Remover
-- [ ] `GET    /api/v1/goals/{id}/progress` — Percentual atingido
+- [X] `GET    /api/v1/goals` — Listar
+- [X] `POST   /api/v1/goals` — Criar
+- [X] `PUT    /api/v1/goals/{id}` — Atualizar
+- [X] `DELETE /api/v1/goals/{id}` — Remover
+- [X] `GET    /api/v1/goals/{id}/progress` — Percentual atingido
 
 ### Flyway
 
-- [ ] `V7__create_financial_goals_table.sql`
+- [X] `V7__create_financial_goals_table.sql`
 
 ---
 
@@ -409,8 +409,8 @@ com.ruan.fincore
 - [X] `V3__seed_default_categories.sql`
 - [X] `V4__create_accounts_table.sql`
 - [X] `V5__create_transactions_table.sql`
-- [ ] `V6__create_budgets_table.sql`
-- [ ] `V7__create_financial_goals_table.sql`
+- [X] `V6__create_budgets_table.sql`
+- [X] `V7__create_financial_goals_table.sql`
 
 ---
 
@@ -423,8 +423,8 @@ com.ruan.fincore
 | [X] | 2 — Categorias | Fase 1 | — |
 | [X] | 3 — Contas | Fase 1 | — |
 | [X] | 4 — Transações | Fases 2, 3 | — |
-| [ ] | 5 — Orçamentos | Fases 2, 4 | — |
-| [ ] | 6 — Metas | Fase 1 | — |
+| [X] | 5 — Orçamentos | Fases 2, 4 | — |
+| [X] | 6 — Metas | Fase 1 | — |
 | [ ] | 7 — Dashboard | Fase 4 | — |
 | [ ] | 8 — IA (Gemini) | Fase 7 | — |
 | [ ] | 9 — Testes | Fases 1-8 | — |
