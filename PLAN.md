@@ -26,7 +26,7 @@ API REST para gestão de finanças pessoais com sugestões via IA (Gemini + Lang
 - [X] **`.env`** — Secrets: `SUPABASE_DB_URL`, `SUPABASE_DB_USER`, `SUPABASE_DB_PASSWORD`, `JWT_SECRET`, `GEMINI_API_KEY`
 - [X] **`.gitignore`** — Adicionar `.env`
 - [X] **`Dockerfile`** — Dockerfile multi-stage apenas para a aplicação
-- [ ] **`docker-compose.yml`** — Opcional, apenas para dev local com Testcontainers
+- [X] **`docker-compose.yml`** — Opcional, apenas para dev local com Testcontainers
 
 ---
 
@@ -106,14 +106,14 @@ API REST para gestão de finanças pessoais com sugestões via IA (Gemini + Lang
 
 ### Endpoints
 
-- [ ] `GET    /api/v1/accounts` — Listar
-- [ ] `POST   /api/v1/accounts` — Criar
-- [ ] `PUT    /api/v1/accounts/{id}` — Atualizar
-- [ ] `DELETE /api/v1/accounts/{id}` — Remover
+- [X] `GET    /api/v1/accounts` — Listar
+- [X] `POST   /api/v1/accounts` — Criar
+- [X] `PUT    /api/v1/accounts/{id}` — Atualizar
+- [X] `DELETE /api/v1/accounts/{id}` — Remover
 
 ### Flyway
 
-- [ ] `V4__create_accounts_table.sql`
+- [X] `V4__create_accounts_table.sql`
 
 ---
 
@@ -147,15 +147,15 @@ API REST para gestão de finanças pessoais com sugestões via IA (Gemini + Lang
 
 ### Endpoints
 
-- [ ] `GET    /api/v1/transactions` — Listar (filtros: data, categoria, conta, tipo)
-- [ ] `POST   /api/v1/transactions` — Criar (suporta parcelamento)
-- [ ] `PUT    /api/v1/transactions/{id}` — Atualizar
-- [ ] `DELETE /api/v1/transactions/{id}` — Remover
-- [ ] `GET    /api/v1/transactions/installments/{parentId}` — Listar parcelas
+- [X] `GET    /api/v1/transactions` — Listar (filtros: data, categoria, conta, tipo)
+- [X] `POST   /api/v1/transactions` — Criar (suporta parcelamento)
+- [X] `PUT    /api/v1/transactions/{id}` — Atualizar
+- [X] `DELETE /api/v1/transactions/{id}` — Remover
+- [X] `GET    /api/v1/transactions/installments/{parentId}` — Listar parcelas
 
 ### Flyway
 
-- [ ] `V5__create_transactions_table.sql`
+- [X] `V5__create_transactions_table.sql`
 
 ---
 
@@ -182,15 +182,15 @@ API REST para gestão de finanças pessoais com sugestões via IA (Gemini + Lang
 
 ### Endpoints
 
-- [ ] `GET    /api/v1/budgets` — Listar
-- [ ] `POST   /api/v1/budgets` — Criar
-- [ ] `PUT    /api/v1/budgets/{id}` — Atualizar
-- [ ] `DELETE /api/v1/budgets/{id}` — Remover
-- [ ] `GET    /api/v1/budgets/summary?month=&year=` — Gasto vs orçado
+- [X] `GET    /api/v1/budgets` — Listar
+- [X] `POST   /api/v1/budgets` — Criar
+- [X] `PUT    /api/v1/budgets/{id}` — Atualizar
+- [X] `DELETE /api/v1/budgets/{id}` — Remover
+- [X] `GET    /api/v1/budgets/summary?month=&year=` — Gasto vs orçado
 
 ### Flyway
 
-- [ ] `V6__create_budgets_table.sql`
+- [X] `V6__create_budgets_table.sql`
 
 ---
 
@@ -211,15 +211,15 @@ API REST para gestão de finanças pessoais com sugestões via IA (Gemini + Lang
 
 ### Endpoints
 
-- [ ] `GET    /api/v1/goals` — Listar
-- [ ] `POST   /api/v1/goals` — Criar
-- [ ] `PUT    /api/v1/goals/{id}` — Atualizar
-- [ ] `DELETE /api/v1/goals/{id}` — Remover
-- [ ] `GET    /api/v1/goals/{id}/progress` — Percentual atingido
+- [X] `GET    /api/v1/goals` — Listar
+- [X] `POST   /api/v1/goals` — Criar
+- [X] `PUT    /api/v1/goals/{id}` — Atualizar
+- [X] `DELETE /api/v1/goals/{id}` — Remover
+- [X] `GET    /api/v1/goals/{id}/progress` — Percentual atingido
 
 ### Flyway
 
-- [ ] `V7__create_financial_goals_table.sql`
+- [X] `V7__create_financial_goals_table.sql`
 
 ---
 
@@ -227,9 +227,9 @@ API REST para gestão de finanças pessoais com sugestões via IA (Gemini + Lang
 
 ### Endpoints
 
-- [ ] `GET /api/v1/dashboard/summary?month=&year=` — Resumo: receitas, despesas, saldo
-- [ ] `GET /api/v1/dashboard/expenses-by-category?month=&year=` — Gastos por categoria
-- [ ] `GET /api/v1/dashboard/monthly-evolution?months=12` — Evolução mensal
+- [X] `GET /api/v1/dashboard/summary?month=&year=` — Resumo: receitas, despesas, saldo
+- [X] `GET /api/v1/dashboard/expenses-by-category?month=&year=` — Gastos por categoria
+- [X] `GET /api/v1/dashboard/monthly-evolution?months=12` — Evolução mensal
 
 ---
 
@@ -237,8 +237,8 @@ API REST para gestão de finanças pessoais com sugestões via IA (Gemini + Lang
 
 ### Dependências
 
-- [ ] `langchain4j-spring-boot-starter` — Integração Spring Boot com LangChain4J
-- [ ] `langchain4j-google-ai-gemini` — Provider Google Gemini
+- [X] `langchain4j-spring-boot-starter` — Integração Spring Boot com LangChain4J
+- [X] `langchain4j-google-ai-gemini` — Provider Google Gemini
 
 ### Configuração do datasource (Supabase)
 
@@ -289,8 +289,8 @@ ai/
 
 ### Endpoints
 
-- [ ] `POST /api/v1/ai/suggestion` — Resumo financeiro → sugestão textual
-- [ ] `POST /api/v1/ai/insights` — Histórico → padrões de gasto
+- [X] `POST /api/v1/ai/suggestion` — Resumo financeiro → sugestão textual
+- [X] `POST /api/v1/ai/insights` — Histórico → padrões de gasto
 
 ---
 
@@ -305,10 +305,10 @@ ai/
 
 ## Fase 10 — Documentação e Deploy
 
-- [ ] Dockerfile multi-stage para a aplicação
-- [ ] OpenAPI via `springdoc-openapi` em `/swagger-ui.html`
-- [ ] Deploy da aplicação em container Docker conectado ao Supabase
-- [ ] Configurar pool de conexões e SSL (exigido pelo Supabase)
+- [X] Dockerfile multi-stage para a aplicação
+- [X] OpenAPI via `springdoc-openapi` em `/swagger-ui.html`
+- [X] Deploy da aplicação em container Docker conectado ao Supabase
+- [X] Configurar pool de conexões e SSL (exigido pelo Supabase)
 
 ---
 
@@ -407,10 +407,10 @@ com.ruan.fincore
 - [X] `V1__create_users_table.sql`
 - [X] `V2__create_categories_table.sql`
 - [X] `V3__seed_default_categories.sql`
-- [ ] `V4__create_accounts_table.sql`
-- [ ] `V5__create_transactions_table.sql`
-- [ ] `V6__create_budgets_table.sql`
-- [ ] `V7__create_financial_goals_table.sql`
+- [X] `V4__create_accounts_table.sql`
+- [X] `V5__create_transactions_table.sql`
+- [X] `V6__create_budgets_table.sql`
+- [X] `V7__create_financial_goals_table.sql`
 
 ---
 
@@ -421,15 +421,14 @@ com.ruan.fincore
 | [X] | 0 — Infraestrutura | — | — |
 | [X] | 1 — Segurança + Usuário | Fase 0 | — |
 | [X] | 2 — Categorias | Fase 1 | — |
-| [ ] | 2 — Categorias | Fase 1 | — |
-| [ ] | 3 — Contas | Fase 1 | — |
-| [ ] | 4 — Transações | Fases 2, 3 | — |
-| [ ] | 5 — Orçamentos | Fases 2, 4 | — |
-| [ ] | 6 — Metas | Fase 1 | — |
-| [ ] | 7 — Dashboard | Fase 4 | — |
-| [ ] | 8 — IA (Gemini) | Fase 7 | — |
+| [X] | 3 — Contas | Fase 1 | — |
+| [X] | 4 — Transações | Fases 2, 3 | — |
+| [X] | 5 — Orçamentos | Fases 2, 4 | — |
+| [X] | 6 — Metas | Fase 1 | — |
+| [X] | 7 — Dashboard | Fase 4 | — |
+| [X] | 8 — IA (Gemini) | Fase 7 | — |
 | [ ] | 9 — Testes | Fases 1-8 | — |
-| [ ] | 10 — Deploy | Fase 9 | — |
+| [X] | 10 — Deploy | Fase 9 | — |
 
 ---
 

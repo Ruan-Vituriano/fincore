@@ -1,0 +1,381 @@
+# Prompt para Planejamento de Fases — Fincore
+---
+
+## Prompt
+
+```
+Você é um planejador de implementação para uma API Java Spring Boot.
+
+Seu trabalho é gerar um plano DETALHADO e EXECUTÁVEL para uma fase do projeto fincore.
+O plano será colado em outro agente que vai implementar código — ele NÃO vai ler o projeto.
+Portanto, o plano deve conter TUDO que o executor precisa saber.
+
+## Regras para o plano
+
+1. Cada arquivo deve ser listado com seu caminho completo e conteúdo TOTAL (não parcial).
+2. Não diga "siga o padrão de X" — inclua o código real, copiado dos arquivos de referência abaixo.
+3. Aplique as regras de negócio do PLAN.md para a fase específica.
+4. Se a fase criar uma migration Flyway, inclua o SQL completo.
+5. Se a fase criar testes unitários, inclua o código completo do teste.
+6. Não inclua comentários no código (convenção do projeto).
+7. Use `camelCase` para métodos/variáveis, `PascalCase` para classes, `UPPER_SNAKE_CASE` para enums/constantes.
+8. Mensagens de erro em português, nomes de classes/métodos/variáveis em inglês.
+
+## Estrutura do plano
+
+Para CADA arquivo, siga este formato:
+
+### Arquivo: `caminho/completo/arquivo.java`
+
+```java
+// código completo aqui
+```
+
+No final, listar os arquivos a serem criados em ordem de dependência.
+
+## Estrutura de pacotes
+
+```
+com.ruan.fincore
+├── controller/     — Controllers REST
+├── service/        — Services (regra de negócio)
+├── repository/     — Repositories (Spring Data JPA)
+├── entity/         — Entities JPA
+├── dto/
+│   └── {domain}/   — Request/Response records por domínio
+├── mapper/         — Mappers (Entity → Response)
+├── enums/          — Enums
+├── exception/      — Exceptions + GlobalExceptionHandler
+└── config/         — Configurações
+```
+
+Migrações: `src/main/resources/db/migration/`
+Testes: `src/test/java/com/ruan/fincore/`
+
+## Arquivos de referência
+
+### Entity
+```java
+package com.ruan.fincore.entity;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@Getter @Setter
+@Entity
+@Table(name = "accounts")
+public class Account {
+    @Id @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+
+    @Column(nullable = false, length = 120)
+    private String name;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private AccountType type;
+
+    @Column(nullable = false, precision = 15, scale = 2)
+    private BigDecimal balance;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
+
+    @PrePersist void onCreate() { LocalDateTime now = LocalDateTime.now(); createdAt = now; updatedAt = now; }
+    @PreUpdate void onUpdate() { updatedAt = LocalDateTime.now(); }
+}
+```
+
+### DTO Request
+```java
+package com.ruan.fincore.dto.account;
+
+import com.ruan.fincore.enums.AccountType;
+import jakarta.validation.constraints.*;
+import java.math.BigDecimal;
+
+public record AccountRequest(
+    @NotBlank(message = "Nome é obrigatório")
+    @Size(max = 120, message = "Nome deve ter no máximo 120 caracteres")
+    String name,
+    @NotNull(message = "Tipo é obrigatório")
+    AccountType type,
+    @PositiveOrZero(message = "Saldo deve ser maior ou igual a zero")
+    BigDecimal balance
+) {}
+```
+
+### DTO Response
+```java
+package com.ruan.fincore.dto.account;
+
+import com.ruan.fincore.enums.AccountType;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+public record AccountResponse(
+    UUID id, String name, AccountType type, BigDecimal balance, UUID userId, LocalDateTime createdAt
+) {}
+```
+
+### Mapper
+```java
+package com.ruan.fincore.mapper;
+
+import com.ruan.fincore.dto.account.AccountResponse;
+import com.ruan.fincore.entity.Account;
+
+public final class AccountMapper {
+    private AccountMapper() {}
+    public static AccountResponse toResponse(Account a) {
+        return new AccountResponse(a.getId(), a.getName(), a.getType(), a.getBalance(), a.getUser().getId(), a.getCreatedAt());
+    }
+}
+```
+
+### Repository
+```java
+package com.ruan.fincore.repository;
+
+import com.ruan.fincore.entity.Account;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.*;
+
+public interface AccountRepository extends JpaRepository<Account, UUID> {
+    List<Account> findByUserIdOrderByName(UUID userId);
+    Optional<Account> findByIdAndUserId(UUID id, UUID userId);
+    boolean existsByNameIgnoreCaseAndUserId(String name, UUID userId);
+    boolean existsByNameIgnoreCaseAndUserIdAndIdNot(String name, UUID userId, UUID id);
+}
+```
+
+### Service
+```java
+package com.ruan.fincore.service;
+
+import com.ruan.fincore.dto.account.*;
+import com.ruan.fincore.entity.*;
+import com.ruan.fincore.exception.*;
+import com.ruan.fincore.mapper.AccountMapper;
+import com.ruan.fincore.repository.AccountRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class AccountService {
+    private final AccountRepository accountRepository;
+    private final UserService userService;
+
+    @Transactional(readOnly = true)
+    public List<AccountResponse> list(String email) {
+        UUID userId = findUserId(email);
+        return accountRepository.findByUserIdOrderByName(userId).stream().map(AccountMapper::toResponse).toList();
+    }
+
+    @Transactional
+    public AccountResponse create(String email, AccountRequest request) {
+        User user = userService.findByEmail(email);
+        validateUniqueName(user.getId(), request.name(), null);
+        Account account = new Account();
+        account.setName(request.name());
+        account.setType(request.type());
+        account.setBalance(request.balance() != null ? request.balance() : BigDecimal.ZERO);
+        account.setUser(user);
+        return AccountMapper.toResponse(accountRepository.save(account));
+    }
+
+    @Transactional
+    public AccountResponse update(String email, UUID id, AccountRequest request) {
+        UUID userId = findUserId(email);
+        validateUniqueName(userId, request.name(), id);
+        Account account = findOwnedAccount(id, userId);
+        account.setName(request.name());
+        account.setType(request.type());
+        account.setBalance(request.balance());
+        return AccountMapper.toResponse(account);
+    }
+
+    @Transactional
+    public void delete(String email, UUID id) {
+        Account account = findOwnedAccount(id, findUserId(email));
+        accountRepository.delete(account);
+    }
+
+    private UUID findUserId(String email) { return userService.findByEmail(email).getId(); }
+    private Account findOwnedAccount(UUID id, UUID userId) {
+        return accountRepository.findByIdAndUserId(id, userId).orElseThrow(() -> new ResourceNotFoundException("Conta não encontrada"));
+    }
+    private void validateUniqueName(UUID userId, String name, UUID id) {
+        boolean exists = id == null ? accountRepository.existsByNameIgnoreCaseAndUserId(name, userId) : accountRepository.existsByNameIgnoreCaseAndUserIdAndIdNot(name, userId, id);
+        if (exists) throw new BusinessException("Já existe uma conta com este nome");
+    }
+}
+```
+
+### Controller
+```java
+package com.ruan.fincore.controller;
+
+import com.ruan.fincore.dto.account.*;
+import com.ruan.fincore.service.AccountService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/api/v1/accounts")
+@RequiredArgsConstructor
+public class AccountController {
+    private final AccountService accountService;
+
+    @GetMapping
+    public List<AccountResponse> list(@AuthenticationPrincipal Jwt jwt) { return accountService.list(jwt.getSubject()); }
+
+    @PostMapping @ResponseStatus(HttpStatus.CREATED)
+    public AccountResponse create(@AuthenticationPrincipal Jwt jwt, @Valid @RequestBody AccountRequest request) { return accountService.create(jwt.getSubject(), request); }
+
+    @PutMapping("/{id}")
+    public AccountResponse update(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @Valid @RequestBody AccountRequest request) { return accountService.update(jwt.getSubject(), id, request); }
+
+    @DeleteMapping("/{id}") @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) { accountService.delete(jwt.getSubject(), id); }
+}
+```
+
+### Exceptions
+```java
+package com.ruan.fincore.exception;
+public class ResourceNotFoundException extends RuntimeException { public ResourceNotFoundException(String msg) { super(msg); } }
+```
+```java
+package com.ruan.fincore.exception;
+public class BusinessException extends RuntimeException { public BusinessException(String msg) { super(msg); } }
+```
+
+### GlobalExceptionHandler
+```java
+package com.ruan.fincore.exception;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.*;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.*;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
+import java.time.Instant;
+import java.util.*;
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+    @ExceptionHandler(ResourceNotFoundException.class) public ProblemDetail handleNotFound(ResourceNotFoundException ex) { return problem(HttpStatus.NOT_FOUND, "Recurso não encontrado", ex.getMessage()); }
+    @ExceptionHandler(BusinessException.class) public ProblemDetail handleBusiness(BusinessException ex) { return problem(HttpStatus.CONFLICT, "Conflito de regra de negócio", ex.getMessage()); }
+    @ExceptionHandler(MethodArgumentNotValidException.class) public ProblemDetail handleValidation(MethodArgumentNotValidException ex) { Map<String,String> f = new HashMap<>(); for (FieldError e : ex.getBindingResult().getFieldErrors()) f.put(e.getField(), e.getDefaultMessage()); ProblemDetail d = problem(HttpStatus.BAD_REQUEST, "Requisição inválida", "Validação de campos falhou"); d.setProperty("fieldErrors", f); return d; }
+    @ExceptionHandler(AuthenticationException.class) public ProblemDetail handleAuth(AuthenticationException ex) { return problem(HttpStatus.UNAUTHORIZED, "Não autorizado", "Credenciais inválidas"); }
+    @ExceptionHandler(AccessDeniedException.class) public ProblemDetail handleAccess(AccessDeniedException ex) { return problem(HttpStatus.FORBIDDEN, "Acesso negado", "Você não possui permissão para esta ação"); }
+    @ExceptionHandler(DataIntegrityViolationException.class) public ProblemDetail handleData(DataIntegrityViolationException ex) { return problem(HttpStatus.CONFLICT, "Conflito de dados", "Registro viola uma restrição do banco de dados"); }
+    @ExceptionHandler(NoResourceFoundException.class) public ProblemDetail handleNoResource(NoResourceFoundException ex) { return problem(HttpStatus.NOT_FOUND, "Recurso não encontrado", "Rota não encontrada"); }
+    private ProblemDetail problem(HttpStatus s, String t, String d) { ProblemDetail p = ProblemDetail.forStatusAndDetail(s, d); p.setTitle(t); p.setProperty("timestamp", Instant.now()); return p; }
+}
+```
+
+### Migration Flyway
+```sql
+CREATE TABLE accounts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(120) NOT NULL,
+    type VARCHAR(20) NOT NULL CHECK (type IN ('CHECKING', 'SAVINGS', 'CREDIT_CARD')),
+    balance DECIMAL(15, 2) NOT NULL DEFAULT 0,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP NOT NULL
+);
+CREATE UNIQUE INDEX uq_accounts_user_name ON accounts (user_id, name);
+```
+
+### Teste Unitário
+```java
+package com.ruan.fincore.service;
+import com.ruan.fincore.dto.account.*;
+import com.ruan.fincore.entity.*;
+import com.ruan.fincore.enums.*;
+import com.ruan.fincore.exception.*;
+import com.ruan.fincore.repository.*;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.*;
+import org.mockito.junit.jupiter.MockitoExtension;
+import java.math.BigDecimal;
+import java.util.*;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class AccountServiceTest {
+    private static final UUID USER_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
+    @Mock private AccountRepository accountRepository;
+    @Mock private UserService userService;
+    @InjectMocks private AccountService accountService;
+    private User user;
+
+    @BeforeEach void setUp() { user = new User(); user.setId(USER_ID); user.setEmail("test@example.com"); user.setRole(Role.USER); }
+
+    @Test void listShouldReturnAccounts() {
+        Account a = new Account(); a.setId(UUID.randomUUID()); a.setName("Nubank"); a.setType(AccountType.CHECKING); a.setBalance(BigDecimal.valueOf(1000)); a.setUser(user);
+        when(userService.findByEmail("test@example.com")).thenReturn(user);
+        when(accountRepository.findByUserIdOrderByName(USER_ID)).thenReturn(List.of(a));
+        List<AccountResponse> r = accountService.list("test@example.com");
+        assertThat(r).hasSize(1);
+        assertThat(r.get(0).name()).isEqualTo("Nubank");
+    }
+
+    @Test void createShouldSaveAccount() {
+        when(userService.findByEmail("test@example.com")).thenReturn(user);
+        when(accountRepository.existsByNameIgnoreCaseAndUserId("Inter", USER_ID)).thenReturn(false);
+        when(accountRepository.save(any(Account.class))).thenAnswer(inv -> inv.getArgument(0));
+        AccountRequest req = new AccountRequest("Inter", AccountType.SAVINGS, BigDecimal.valueOf(500));
+        AccountResponse r = accountService.create("test@example.com", req);
+        assertThat(r.name()).isEqualTo("Inter");
+    }
+
+    @Test void createShouldThrowWhenNameExists() {
+        when(userService.findByEmail("test@example.com")).thenReturn(user);
+        when(accountRepository.existsByNameIgnoreCaseAndUserId("Nubank", USER_ID)).thenReturn(true);
+        AccountRequest req = new AccountRequest("Nubank", AccountType.CHECKING, BigDecimal.ZERO);
+        assertThatThrownBy(() -> accountService.create("test@example.com", req))
+            .isInstanceOf(BusinessException.class).hasMessage("Já existe uma conta com este nome");
+    }
+}
+```
+
+## Fase a planejar
+
+Fase 9 — Testes
+
+## Leia o PLAN.md e o AGENT.md
+
+## Gere o plano completo
+
+Agora gere o plano com TODOS os arquivos, em ordem de dependência, com código completo.
+```
