@@ -26,7 +26,7 @@ API REST para gestão de finanças pessoais com sugestões via IA (Gemini + Lang
 - [X] **`.env`** — Secrets: `SUPABASE_DB_URL`, `SUPABASE_DB_USER`, `SUPABASE_DB_PASSWORD`, `JWT_SECRET`, `GEMINI_API_KEY`
 - [X] **`.gitignore`** — Adicionar `.env`
 - [X] **`Dockerfile`** — Dockerfile multi-stage apenas para a aplicação
-- [ ] **`docker-compose.yml`** — Opcional, apenas para dev local com Testcontainers
+- [X] **`docker-compose.yml`** — Opcional, apenas para dev local com Testcontainers
 
 ---
 
@@ -305,10 +305,10 @@ ai/
 
 ## Fase 10 — Documentação e Deploy
 
-- [ ] Dockerfile multi-stage para a aplicação
-- [ ] OpenAPI via `springdoc-openapi` em `/swagger-ui.html`
-- [ ] Deploy da aplicação em container Docker conectado ao Supabase
-- [ ] Configurar pool de conexões e SSL (exigido pelo Supabase)
+- [X] Dockerfile multi-stage para a aplicação
+- [X] OpenAPI via `springdoc-openapi` em `/swagger-ui.html`
+- [X] Deploy da aplicação em container Docker conectado ao Supabase
+- [X] Configurar pool de conexões e SSL (exigido pelo Supabase)
 
 ---
 
@@ -428,7 +428,7 @@ com.ruan.fincore
 | [X] | 7 — Dashboard | Fase 4 | — |
 | [X] | 8 — IA (Gemini) | Fase 7 | — |
 | [ ] | 9 — Testes | Fases 1-8 | — |
-| [ ] | 10 — Deploy | Fase 9 | — |
+| [X] | 10 — Deploy | Fase 9 | — |
 
 ---
 
