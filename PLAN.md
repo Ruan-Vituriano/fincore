@@ -227,9 +227,9 @@ API REST para gestão de finanças pessoais com sugestões via IA (Gemini + Lang
 
 ### Endpoints
 
-- [ ] `GET /api/v1/dashboard/summary?month=&year=` — Resumo: receitas, despesas, saldo
-- [ ] `GET /api/v1/dashboard/expenses-by-category?month=&year=` — Gastos por categoria
-- [ ] `GET /api/v1/dashboard/monthly-evolution?months=12` — Evolução mensal
+- [X] `GET /api/v1/dashboard/summary?month=&year=` — Resumo: receitas, despesas, saldo
+- [X] `GET /api/v1/dashboard/expenses-by-category?month=&year=` — Gastos por categoria
+- [X] `GET /api/v1/dashboard/monthly-evolution?months=12` — Evolução mensal
 
 ---
 
@@ -237,8 +237,8 @@ API REST para gestão de finanças pessoais com sugestões via IA (Gemini + Lang
 
 ### Dependências
 
-- [ ] `langchain4j-spring-boot-starter` — Integração Spring Boot com LangChain4J
-- [ ] `langchain4j-google-ai-gemini` — Provider Google Gemini
+- [X] `langchain4j-spring-boot-starter` — Integração Spring Boot com LangChain4J
+- [X] `langchain4j-google-ai-gemini` — Provider Google Gemini
 
 ### Configuração do datasource (Supabase)
 
@@ -289,8 +289,8 @@ ai/
 
 ### Endpoints
 
-- [ ] `POST /api/v1/ai/suggestion` — Resumo financeiro → sugestão textual
-- [ ] `POST /api/v1/ai/insights` — Histórico → padrões de gasto
+- [X] `POST /api/v1/ai/suggestion` — Resumo financeiro → sugestão textual
+- [X] `POST /api/v1/ai/insights` — Histórico → padrões de gasto
 
 ---
 
@@ -425,8 +425,8 @@ com.ruan.fincore
 | [X] | 4 — Transações | Fases 2, 3 | — |
 | [X] | 5 — Orçamentos | Fases 2, 4 | — |
 | [X] | 6 — Metas | Fase 1 | — |
-| [ ] | 7 — Dashboard | Fase 4 | — |
-| [ ] | 8 — IA (Gemini) | Fase 7 | — |
+| [X] | 7 — Dashboard | Fase 4 | — |
+| [X] | 8 — IA (Gemini) | Fase 7 | — |
 | [ ] | 9 — Testes | Fases 1-8 | — |
 | [ ] | 10 — Deploy | Fase 9 | — |
 
