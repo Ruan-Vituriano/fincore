@@ -1,8 +1,10 @@
 package com.ruan.fincore.controller;
 
+import com.ruan.fincore.dto.dashboard.BalanceEvolutionResponse;
 import com.ruan.fincore.dto.dashboard.DashboardSummaryResponse;
 import com.ruan.fincore.dto.dashboard.ExpensesByCategoryResponse;
 import com.ruan.fincore.dto.dashboard.MonthlyEvolutionResponse;
+import com.ruan.fincore.dto.dashboard.SavingsRateResponse;
 import com.ruan.fincore.service.DashboardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -42,5 +44,20 @@ public class DashboardController {
             @AuthenticationPrincipal Jwt jwt,
             @RequestParam(defaultValue = "12") int months) {
         return dashboardService.monthlyEvolution(jwt.getSubject(), months);
+    }
+
+    @GetMapping("/savings-rate")
+    public SavingsRateResponse savingsRate(
+            @AuthenticationPrincipal Jwt jwt,
+            @RequestParam Integer month,
+            @RequestParam Integer year) {
+        return dashboardService.savingsRate(jwt.getSubject(), month, year);
+    }
+
+    @GetMapping("/balance-evolution")
+    public List<BalanceEvolutionResponse> balanceEvolution(
+            @AuthenticationPrincipal Jwt jwt,
+            @RequestParam(defaultValue = "12") int months) {
+        return dashboardService.balanceEvolution(jwt.getSubject(), months);
     }
 }

@@ -1,9 +1,12 @@
 package com.ruan.fincore.service;
 
+import com.ruan.fincore.dto.dashboard.BalanceEvolutionResponse;
 import com.ruan.fincore.dto.dashboard.DashboardSummaryResponse;
 import com.ruan.fincore.dto.dashboard.ExpensesByCategoryResponse;
 import com.ruan.fincore.dto.dashboard.MonthlyEvolutionResponse;
+import com.ruan.fincore.dto.dashboard.SavingsRateResponse;
 import com.ruan.fincore.enums.TransactionType;
+import com.ruan.fincore.repository.AccountRepository;
 import com.ruan.fincore.repository.CategorySumProjection;
 import com.ruan.fincore.repository.MonthlySumProjection;
 import com.ruan.fincore.repository.TransactionRepository;
@@ -26,6 +29,7 @@ import java.util.UUID;
 public class DashboardService {
 
     private final TransactionRepository transactionRepository;
+    private final AccountRepository accountRepository;
     private final UserService userService;
 
     @Transactional(readOnly = true)
@@ -83,6 +87,39 @@ public class DashboardService {
             BigDecimal[] values = monthlyMap.getOrDefault(key, new BigDecimal[]{BigDecimal.ZERO, BigDecimal.ZERO});
             result.add(new MonthlyEvolutionResponse(date.getMonthValue(), date.getYear(), values[0], values[1]));
         }
+        return result;
+    }
+
+    @Transactional(readOnly = true)
+    public SavingsRateResponse savingsRate(String email, Integer month, Integer year) {
+        UUID userId = findUserId(email);
+        DashboardSummaryResponse summary = summary(email, month, year);
+        BigDecimal rate = summary.income().compareTo(BigDecimal.ZERO) == 0
+                ? BigDecimal.ZERO
+                : summary.balance().divide(summary.income(), 4, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
+        return new SavingsRateResponse(month, year, summary.income(), summary.expense(), rate);
+    }
+
+    @Transactional(readOnly = true)
+    public List<BalanceEvolutionResponse> balanceEvolution(String email, int months) {
+        UUID userId = findUserId(email);
+        BigDecimal initialBalance = accountRepository.sumBalanceByUserId(userId);
+
+        List<MonthlyEvolutionResponse> evolution = monthlyEvolution(email, months);
+        List<BalanceEvolutionResponse> result = new ArrayList<>();
+        BigDecimal cumulativeBalance = initialBalance;
+
+        for (int i = evolution.size() - 1; i >= 0; i--) {
+            MonthlyEvolutionResponse m = evolution.get(i);
+            cumulativeBalance = cumulativeBalance.add(m.income()).subtract(m.expense());
+            result.add(new BalanceEvolutionResponse(m.month(), m.year(), cumulativeBalance));
+        }
+
+        result.sort((a, b) -> {
+            if (!a.year().equals(b.year())) return a.year().compareTo(b.year());
+            return a.month().compareTo(b.month());
+        });
+
         return result;
     }
 
