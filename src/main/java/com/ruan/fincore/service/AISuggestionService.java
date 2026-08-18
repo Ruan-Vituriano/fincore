@@ -7,6 +7,8 @@ import com.ruan.fincore.dto.ai.SuggestionResponse;
 import com.ruan.fincore.dto.dashboard.DashboardSummaryResponse;
 import com.ruan.fincore.dto.dashboard.ExpensesByCategoryResponse;
 import com.ruan.fincore.dto.dashboard.MonthlyEvolutionResponse;
+import com.ruan.fincore.dto.investment.InvestmentResponse;
+import com.ruan.fincore.enums.InvestmentType;
 import dev.langchain4j.model.chat.ChatModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,6 +25,7 @@ public class AISuggestionService {
 
     private final ChatModel chatModel;
     private final DashboardService dashboardService;
+    private final InvestmentService investmentService;
 
     @Transactional(readOnly = true)
     public SuggestionResponse suggestion(String email, SuggestionRequest request) {
@@ -85,5 +89,53 @@ public class AISuggestionService {
 
         String response = chatModel.chat(prompt);
         return new InsightsResponse(response);
+    }
+
+    @Transactional(readOnly = true)
+    public SuggestionResponse investmentAnalysis(String email) {
+        List<InvestmentResponse> investments = investmentService.list(email);
+
+        if (investments.isEmpty()) {
+            return new SuggestionResponse("Você ainda não possui investimentos cadastrados. Cadastre seus investimentos para receber análises personalizadas da IA.");
+        }
+
+        Map<InvestmentType, List<InvestmentResponse>> byType = investments.stream()
+                .collect(Collectors.groupingBy(InvestmentResponse::type));
+
+        String portfolioDetail = investments.stream()
+                .map(i -> String.format("- %s (%s): Investido R$ %.2f, Atual R$ %.2f, Rendimento %.1f%%",
+                        i.name(), i.type(), i.amountInvested(), i.currentValue(), i.returnPercentage()))
+                .collect(Collectors.joining("\n"));
+
+        String allocationDetail = byType.entrySet().stream()
+                .map(e -> String.format("- %s: %d ativo(s)", e.getKey().name(), e.getValue().size()))
+                .collect(Collectors.joining("\n"));
+
+        String prompt = String.format("""
+                Você é um consultor de investimentos especializado. Analise a carteira do usuário e forneça uma análise completa e personalizada.
+
+                Carteira do Usuário:
+                %s
+
+                Distribuição por Tipo:
+                %s
+
+                Forneça:
+                1. Análise da alocação atual (concentração, diversificação)
+                2. Rendimento de cada ativo (perda/ganho percentual)
+                3. Sugestões de redistribuição para melhorar o portfólio
+                4. Recomendações baseadas no perfil de risco observado
+                5. Considerando condições gerais de mercado brasileiro atual
+
+                Responda em português brasileiro, de forma clara, prática e didática. Use no máximo 500 palavras.
+                """,
+                portfolioDetail, allocationDetail);
+
+        try {
+            String response = chatModel.chat(prompt);
+            return new SuggestionResponse(response);
+        } catch (Exception e) {
+            return new SuggestionResponse("Não foi possível realizar a análise no momento. Verifique sua chave de API do Gemini ou tente novamente mais tarde.");
+        }
     }
 }

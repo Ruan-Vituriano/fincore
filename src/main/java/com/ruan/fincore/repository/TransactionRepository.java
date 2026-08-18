@@ -70,5 +70,11 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
             ORDER BY year DESC, month DESC
             """, nativeQuery = true)
     List<MonthlySumProjection> sumByTypeAndMonth(@Param("userId") UUID userId,
-                                                 @Param("dateFrom") java.time.LocalDate dateFrom);
+                                                  @Param("dateFrom") java.time.LocalDate dateFrom);
+
+    boolean existsByUserIdAndDescriptionAndDateBetweenAndIsRecurringTrue(
+            @Param("userId") UUID userId,
+            @Param("description") String description,
+            @Param("dateFrom") LocalDate dateFrom,
+            @Param("dateTo") LocalDate dateTo);
 }

@@ -32,4 +32,9 @@ public class AIController {
                                      @Valid @RequestBody InsightsRequest request) {
         return aiSuggestionService.insights(jwt.getSubject(), request);
     }
+
+    @PostMapping("/investment-analysis")
+    public SuggestionResponse investmentAnalysis(@AuthenticationPrincipal Jwt jwt) {
+        return aiSuggestionService.investmentAnalysis(jwt.getSubject());
+    }
 }
