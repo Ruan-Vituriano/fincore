@@ -59,6 +59,11 @@ public class GlobalExceptionHandler {
         return problem(HttpStatus.NOT_FOUND, "Recurso não encontrado", "Rota não encontrada");
     }
 
+    @ExceptionHandler(Exception.class)
+    public ProblemDetail handleGeneric(Exception ex) {
+        return problem(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno", "Ocorreu um erro inesperado");
+    }
+
     private ProblemDetail problem(HttpStatus status, String title, String detail) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(status, detail);
         problem.setTitle(title);

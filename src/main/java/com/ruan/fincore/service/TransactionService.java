@@ -230,8 +230,13 @@ public class TransactionService {
     }
 
     private Category findOwnedCategory(UUID categoryId, UUID userId) {
-        return categoryRepository.findByIdAndUserId(categoryId, userId)
+        Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada"));
+        boolean accessible = category.getUser() == null || category.getUser().getId().equals(userId);
+        if (!accessible) {
+            throw new ResourceNotFoundException("Categoria não encontrada");
+        }
+        return category;
     }
 
     private Account findOwnedAccount(UUID accountId, UUID userId) {

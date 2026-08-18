@@ -61,8 +61,13 @@ public class CategoryService {
     }
 
     private Category findOwnedCategory(UUID id, UUID userId) {
-        return categoryRepository.findByIdAndUserId(id, userId)
+        Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada"));
+        boolean owned = category.getUser() == null || category.getUser().getId().equals(userId);
+        if (!owned) {
+            throw new ResourceNotFoundException("Categoria não encontrada");
+        }
+        return category;
     }
 
     private void validateUniqueName(UUID userId, String name, CategoryType type, UUID id) {
