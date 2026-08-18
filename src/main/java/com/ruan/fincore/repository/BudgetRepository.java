@@ -21,15 +21,15 @@ public interface BudgetRepository extends JpaRepository<Budget, UUID> {
 
     boolean existsByUserIdAndCategoryIdAndMonthAndYearAndIdNot(UUID userId, UUID categoryId, Integer month, Integer year, UUID id);
 
-    @Query("""
-            SELECT t.category.id AS categoryId, COALESCE(SUM(t.amount), 0) AS total
-            FROM Transaction t
-            WHERE t.user.id = :userId
-              AND t.type = com.ruan.fincore.enums.TransactionType.EXPENSE
-              AND FUNCTION('MONTH', t.date) = :month
-              AND FUNCTION('YEAR', t.date) = :year
-            GROUP BY t.category.id
-            """)
+    @Query(value = """
+            SELECT t.category_id AS categoryId, COALESCE(SUM(t.amount), 0) AS total
+            FROM transactions t
+            WHERE t.user_id = :userId
+              AND t.type = 'EXPENSE'
+              AND EXTRACT(MONTH FROM t.date) = :month
+              AND EXTRACT(YEAR FROM t.date) = :year
+            GROUP BY t.category_id
+            """, nativeQuery = true)
     List<CategoryExpenseProjection> sumExpensesByCategoryAndPeriod(@Param("userId") UUID userId,
                                                                     @Param("month") Integer month,
                                                                     @Param("year") Integer year);
